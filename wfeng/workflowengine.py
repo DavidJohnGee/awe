@@ -28,23 +28,28 @@ from wfeng.pluginmgr import PluginMgr
 
 log = logging.getLogger(__name__)
 
+class AttrDict(dict):
+    def __init__(self, *args, **kwargs):
+        super(AttrDict, self).__init__(*args, **kwargs)
+        self.__dict__ = self
 
 class WorkflowEngine:
     """The main class of the workflow manager."""
-    def __init__(self):
-
-        self.dynamicTaskValidator = DynamicTaskValidator()
-        self.term_size = 80
-        args = os.popen('stty -a', 'r').read().split(';')
-        for x in args:
-            x = x.strip().lstrip()
-            if x.startswith("columns"):
-                # Either split by = or ' '
-                splitChar = ' '
-                if '=' in x:
-                    splitChar = '='
-                k, v = x.split(splitChar)
-                self.term_size = int(v)
+    def __init__(self, argdict):
+        
+        self.args = AttrDict(argdict)
+        # self.dynamicTaskValidator = DynamicTaskValidator()
+        # self.term_size = 80
+        # args = os.popen('stty -a', 'r').read().split(';')
+        # for x in args:
+        #    x = x.strip().lstrip()
+        #    if x.startswith("columns"):
+        #        # Either split by = or ' '
+        #        splitChar = ' '
+        #        if '=' in x:
+        #            splitChar = '='
+        #        k, v = x.split(splitChar)
+        #        self.term_size = int(v)
 
     def deletePidFile(self):
         pid = str(os.getpid())
@@ -245,8 +250,8 @@ class WorkflowEngine:
 
     def start(self):
         # Read in command line options
-        o = WorkflowOptions()
-        o.parse()
+        w = WorkflowOptions()
+        o = w.parse(self.args)
         if o.version:
             if os.path.exists(constants.VERSION_FILE):
                 with open(constants.VERSION_FILE, 'r') as fin:
@@ -988,7 +993,7 @@ class CmdLineWorkflowRunner:
 
 class WorkflowOptions:
     """Class for finding options needed"""
-    def parse(self):
+    def parse(self, args):
         "Parses command line for options"
         parser = argparse.ArgumentParser(description="Workflow engine")
         parser.add_argument("-w", "--workfile",
@@ -1054,8 +1059,10 @@ class WorkflowOptions:
         parser.add_argument("--parallel-delay",
                             default="1", type=int,
                             help=argparse.SUPPRESS)
-        args = parser.parse_args()
-        self.version = args.version
+
+        # args = parser.parse_args()
+        # self.version = args.version
+
         if args.version:
             return
         if args.task == "":
@@ -1183,11 +1190,13 @@ class WorkflowOptions:
         self.parallel_delay = args.parallel_delay
         self.version_checker = PluginMgr()
         self.tag = args.tag
+        self.version = args.version
         if self.unparsed_task != None:
             if self.reset:
                 self.phase = constants.OPT_EXECUTE
             else:
                 self.phase = constants.OPT_POSTCHECK
+        return self
 
     def needMenu(self):
         if self.phase == None and self.unparsed_task == None and \
