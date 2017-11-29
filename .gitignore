@@ -1,2 +1,6 @@
 *.pyc
 wfeng/*.pyc
+AWE.egg-info/
+dist/AWE-*.tar.gz
+dist/wfeng-*.tar.gz
+wfeng.egg-info/
