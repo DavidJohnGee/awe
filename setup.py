@@ -3,11 +3,11 @@ import distutils
 import os
 import shutil
 
-setup(name='AWE',
+setup(name='wfeng',
       description='Ammeon workflow engine',
       author='Ammeon',
       author_email='awe-support@ammeon.com, david.john.gee@ipengineer.net',
-      version="1.3",
+      version="0.2",
       long_description="The Ammeon Workflow Engine (AWE) uses a workflow, " \
                         "a file containing a series of tasks that are " \
                         "grouped into categories (or phases), to define " \

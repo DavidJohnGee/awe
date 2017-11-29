@@ -39,7 +39,7 @@ class WorkflowEngine:
         
         self.args = AttrDict(argdict)
         # self.dynamicTaskValidator = DynamicTaskValidator()
-        # self.term_size = 80
+        self.term_size = 80
         # args = os.popen('stty -a', 'r').read().split(';')
         # for x in args:
         #    x = x.strip().lstrip()
